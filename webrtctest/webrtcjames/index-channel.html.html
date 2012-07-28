@@ -1,0 +1,18 @@
+<body>
+<script src='/_ah/channel/jsapi'></script>
+<script>
+var token = '{{ token }}';
+channel = new goog.appengine.Channel(token);
+socket = channel.open({
+	onopen: function(){},
+	onmessage: function(message) {
+		alert(message.data); }
+});
+send = function(message) {
+	var url = '/?m=' + message + '&token=' + token;
+	var xhr = new XMLHttpRequest();
+	xhr.open('POST', url, true);
+	xhr.send();
+}
+</script>
+</body>
