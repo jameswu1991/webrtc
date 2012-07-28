@@ -1,0 +1,64 @@
+<html>
+<head>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+
+var startice = function(candidate){
+	if (candidate) {
+		localpc.processIceMessage(candidate); }
+}
+
+var localstream;
+window.localpc = new webkitPeerConnection00(null, startice);
+localpc.onaddstream = function(e) {
+		alert('adding');
+		remotevid.src = webkitURL.createObjectURL(e.stream); }; 
+/*var vid1 = document.getElementById("vid1");
+var vid2 = document.getElementById("vid1");*/
+
+navigator.webkitGetUserMedia(
+	{audio:true, video:true},
+	function(stream) {
+		localvid.src = webkitURL.createObjectURL(stream);
+		localstream = stream; },
+	function() {});
+
+window.genoffer = function(){
+	localpc.addStream(localstream);
+	var offer = localpc.createOffer();
+	log.value = offer.toSdp();
+	localpc.setLocalDescription(localpc.SDP_OFFER, offer);
+}
+
+window.loadoffer = function() {
+	localpc.setRemoteDescription(localpc.SDP_OFFER,
+		new SessionDescription(log.value));
+	var answer = localpc.createAnswer(log.value,
+		{has_audio:true, has_video:true});
+	localpc.setLocalDescription(localpc.SDP_ANSWER, answer);
+	log.value = answer.toSdp();
+}
+
+window.loadanswer = function(){
+	localpc.setRemoteDescription(localpc.SDP_ANSWER,
+		new SessionDescription(log.value));
+}
+
+window.startice = function(){
+	localpc.startIce();
+}
+
+});
+</script>
+</head>
+<body>
+<video id="localvid" autoplay="" style="width:320px; height:240px;"></video>
+<video id="remotevid" autoplay="" style="width:320px; height:240px;"></video>
+<button onclick="genoffer()">Generate Offer</button>
+<button onclick="loadoffer()">Load Offer</button>
+<button onclick="loadanswer()">Load Answer</button>
+<button onclick="startice()">Start Ice</button>
+<textarea id="log"></textarea>
+</body>
+</html>
