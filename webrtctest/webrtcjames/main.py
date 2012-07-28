@@ -30,5 +30,9 @@ class MainHandler(webapp2.RequestHandler):
 		message = self.request.get('m')
 		channel.send_message(token, message)
 
-app = webapp2.WSGIApplication([('/', MainHandler)],
+class JqueryHandler(webapp2.RequestHandler):
+	def get(self):
+		self.response.out.write(template.render('jquery.js', {}))
+
+app = webapp2.WSGIApplication([('/', MainHandler), ('/jquery.js', JqueryHandler)],
 							  debug=True)
